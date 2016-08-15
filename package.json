@@ -1,0 +1,55 @@
+{
+  "name": "jasmine-json-stream-reporter",
+  "version": "0.0.1",
+  "description": "jasmine json stream reporter",
+  "main": "index.js",
+  "scripts": {
+    "test": "gulp spec"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rdy/jasmine-json-stream-reporter.git"
+  },
+  "keywords": [
+    "gulp",
+    "jasmine",
+    "json",
+    "reporter"
+  ],
+  "author": "ryan.dy@gmail.com",
+  "license": "MIT",
+  "browser": "./browser.js",
+  "devDependencies": {
+    "babel-core": "^6.3.26",
+    "babel-eslint": "^4.1.6",
+    "babel-loader": "^6.2.4",
+    "babel-plugin-transform-object-assign": "^6.3.13",
+    "babel-plugin-transform-runtime": "^6.3.13",
+    "babel-polyfill": "^6.3.14",
+    "babel-preset-es2015-loose": "^6.1.4",
+    "babel-preset-stage-0": "^6.3.13",
+    "del": "^2.2.0",
+    "foreman": "^1.4.1",
+    "from2": "^2.2.0",
+    "gulp": "^3.9.0",
+    "gulp-babel": "^6.1.1",
+    "gulp-babel-istanbul": "^0.11.0",
+    "gulp-eslint": "^1.1.1",
+    "gulp-if": "^2.0.0",
+    "gulp-jasmine": "^2.2.1",
+    "gulp-load-plugins": "^1.1.0",
+    "gulp-plumber": "^1.0.1",
+    "gulp-util": "^3.0.7",
+    "jasmine-async-suite": "0.0.4",
+    "merge-stream": "^1.0.0",
+    "npm": "^3.5.2",
+    "require-dir": "^0.3.0",
+    "run-sequence": "^1.1.5",
+    "webpack": "^1.13.1",
+    "webpack-stream": "^3.2.0"
+  },
+  "dependencies": {
+    "through2": "^2.0.1",
+    "uuid": "^2.0.2"
+  }
+}

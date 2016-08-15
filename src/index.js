@@ -1,0 +1,1 @@
+module.exports = require('./json_stream_reporter');
