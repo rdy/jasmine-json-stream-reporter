@@ -6,7 +6,8 @@ function handleFailures(failures, onError) {
 }
 
 class JsonStreamReporter {
-  static toReporter = function(reporter, onError = message => new Error(message)) {
+  static toReporter = function(reporter, options = {}) {
+    const {onError = message => new Error(message)} = options;
     let failures = 0;
     const result = {};
     reporter.jasmineStarted(result);

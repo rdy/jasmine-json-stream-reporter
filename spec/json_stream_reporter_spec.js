@@ -6,7 +6,7 @@ describe('JsonStreamReporter', () => {
   beforeEach(() => {
     const uuid = require('uuid');
     spyOn(uuid, 'v4').and.returnValue(guid);
-    JsonStreamReporter = require('../../src/json_stream_reporter');
+    JsonStreamReporter = require('../src/json_stream_reporter');
     printSpy = jasmine.createSpy('print');
     subject = new JsonStreamReporter({print: printSpy});
   });
