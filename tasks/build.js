@@ -14,7 +14,7 @@ gulp.task('build', done => runSequence('clean', 'babel', done));
 gulp.task('babel', () => {
   return mergeStream(
     gulp.src(['src/**/*.js'], {base: 'src'}).pipe(plumber()).pipe(babel()),
-    gulp.src(['src/**/*.js'], {base: 'src'}).pipe(plumber()).pipe(webpackStream(require('../webpack.config'))),
+    gulp.src(['src/json_stream_reporter.js'], {base: 'src'}).pipe(plumber()).pipe(webpackStream(require('../webpack.config'))),
     gulp.src(['LICENSE', 'README.md', 'package.json'], {base: '.'}).pipe(plumber())
   ).pipe(gulp.dest('dist'));
 });
