@@ -14,6 +14,8 @@ module.exports = {
     filename: '[name].js',
     chunkFilename: '[id].js',
     libraryTarget: 'umd',
+    library: 'JasmineJsonStreamReporter',
+    umdNamedDefine: true,
     pathinfo: false
   },
   plugins: [
