@@ -1,6 +1,6 @@
 {
   "name": "jasmine-json-stream-reporter",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "jasmine json stream reporter",
   "main": "index.js",
   "scripts": {
