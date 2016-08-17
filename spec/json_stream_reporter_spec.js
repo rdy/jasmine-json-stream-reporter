@@ -2,13 +2,14 @@ require('./spec_helper');
 
 describe('JsonStreamReporter', () => {
   const guid = 'some-guid';
-  let subject, printSpy, JsonStreamReporter;
+  let subject, completeSpy, printSpy, JsonStreamReporter;
   beforeEach(() => {
     const uuid = require('uuid');
     spyOn(uuid, 'v4').and.returnValue(guid);
     JsonStreamReporter = require('../src/json_stream_reporter');
     printSpy = jasmine.createSpy('print');
-    subject = new JsonStreamReporter({print: printSpy});
+    completeSpy = jasmine.createSpy('complete');
+    subject = new JsonStreamReporter({print: printSpy, onComplete: completeSpy});
   });
 
   describe('#suiteDone', () => {
@@ -24,6 +25,14 @@ describe('JsonStreamReporter', () => {
       const spec = {id: 1};
       subject.specDone(spec);
       expect(printSpy).toHaveBeenCalledWith(JSON.stringify({...spec, id: [guid, spec.id, 'spec'].join(':')}));
+    });
+  });
+
+  describe('#jasmineDone', () => {
+    it('calls the on complete callback', () => {
+      const options = {done: 'fake options'};
+      subject.jasmineDone(options);
+      expect(completeSpy).toHaveBeenCalledWith(options);
     });
   });
 });

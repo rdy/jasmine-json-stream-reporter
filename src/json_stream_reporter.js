@@ -6,7 +6,8 @@ class JsonStreamReporter {
     this._uuid = uuid.v4();
 
     /* eslint-disable no-console */
-    this.print = options.print || console.log;
+    this.print = options.print || function(...args) { console.log(...args); };
+    this.onComplete = options.onComplete || function() {};
     /* eslint-enable no-console */
   }
 
@@ -22,7 +23,9 @@ class JsonStreamReporter {
     this._specResults.push(spec);
   };
 
-  jasmineDone() {}
+  jasmineDone(...args) {
+    this.onComplete(...args);
+  }
 }
 
 module.exports = JsonStreamReporter;
