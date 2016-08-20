@@ -1,30 +1,54 @@
 const uuid = require('uuid');
 
+function generateId({id}, name) {
+  return [this.uuid, id, name].filter(Boolean).join(':');
+}
+
 class JsonStreamReporter {
+  static defaultHeader = '';
+
   constructor(options = {}) {
-    this._specResults = [];
-    this._uuid = uuid.v4();
+    const {header = JsonStreamReporter.defaultHeader} = options;
+
+    this.specResults = [];
+    this.uuid = uuid.v4();
 
     /* eslint-disable no-console */
     this.print = options.print || function(...args) { console.log(...args); };
     this.onComplete = options.onComplete || function() {};
     /* eslint-enable no-console */
+    this.format = options.format || function(obj) { return `${header}${JSON.stringify(obj)}`; };
+  }
+
+  suiteStarted(suite) {
+    suite = {...suite, id: this::generateId(suite, 'suiteStarted')};
+    this.print(this.format(suite));
   }
 
   suiteDone(suite) {
-    suite = {...suite, id: [this._uuid, suite.id, 'suite'].join(':'), specs: this._specResults};
-    this.print(JSON.stringify(suite));
-    this._specResults = [];
-  };
+    suite = {...suite, id: this::generateId(suite, 'suiteDone'), specs: this.specResults};
+    this.print(this.format(suite));
+    this.specResults = [];
+  }
+
+  specStarted(spec) {
+    spec = {...spec, id: this::generateId(spec, 'specStarted')};
+    this.print(this.format(spec));
+  }
 
   specDone(spec) {
-    spec = {...spec, id: [this._uuid, spec.id, 'spec'].join(':')};
-    this.print(JSON.stringify(spec));
-    this._specResults.push(spec);
-  };
+    spec = {...spec, id: this::generateId(spec, 'specDone')};
+    this.print(this.format(spec));
+    this.specResults.push(spec);
+  }
 
-  jasmineDone(...args) {
-    this.onComplete(...args);
+  jasmineStarted(specInfo) {
+    specInfo = {...specInfo, id: this::generateId(specInfo, 'jasmineStarted')};
+    this.print(this.format(specInfo));
+  }
+
+  jasmineDone(options) {
+    this.onComplete(options);
   }
 }
 

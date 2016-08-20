@@ -2,6 +2,7 @@ require('./spec_helper');
 
 describe('JsonStreamReporter', () => {
   const guid = 'some-guid';
+  const header = 'some-header: ';
   let subject, completeSpy, printSpy, JsonStreamReporter;
   beforeEach(() => {
     const uuid = require('uuid');
@@ -9,14 +10,30 @@ describe('JsonStreamReporter', () => {
     JsonStreamReporter = require('../src/json_stream_reporter');
     printSpy = jasmine.createSpy('print');
     completeSpy = jasmine.createSpy('complete');
-    subject = new JsonStreamReporter({print: printSpy, onComplete: completeSpy});
+    subject = new JsonStreamReporter({header, print: printSpy, onComplete: completeSpy});
+  });
+
+  describe('#suiteStarted', () => {
+    it('prints the suite', () => {
+      const suite = {id: 1};
+      subject.suiteStarted(suite);
+      expect(printSpy).toHaveBeenCalledWith(`${header}${JSON.stringify({...suite, id: [guid, suite.id, 'suiteStarted'].join(':')})}`);
+    });
   });
 
   describe('#suiteDone', () => {
     it('prints the suite', () => {
       const suite = {id: 1};
       subject.suiteDone(suite);
-      expect(printSpy).toHaveBeenCalledWith(JSON.stringify({...suite, specs: [], id: [guid, suite.id, 'suite'].join(':')}));
+      expect(printSpy).toHaveBeenCalledWith(`${header}${JSON.stringify({...suite, specs: [], id: [guid, suite.id, 'suiteDone'].join(':')})}`);
+    });
+  });
+
+  describe('#specStarted', () => {
+    it('prints the spec', () => {
+      const spec = {id: 1};
+      subject.specStarted(spec);
+      expect(printSpy).toHaveBeenCalledWith(`${header}${JSON.stringify({...spec, id: [guid, spec.id, 'specStarted'].join(':')})}`);
     });
   });
 
@@ -24,13 +41,21 @@ describe('JsonStreamReporter', () => {
     it('prints the spec', () => {
       const spec = {id: 1};
       subject.specDone(spec);
-      expect(printSpy).toHaveBeenCalledWith(JSON.stringify({...spec, id: [guid, spec.id, 'spec'].join(':')}));
+      expect(printSpy).toHaveBeenCalledWith(`${header}${JSON.stringify({...spec, id: [guid, spec.id, 'specDone'].join(':')})}`);
+    });
+  });
+
+  describe('#jasmineStarted', () => {
+    it('prints the suite info', () => {
+      const suiteInfo = {some: 'suite info'};
+      subject.jasmineStarted(suiteInfo);
+      expect(printSpy).toHaveBeenCalledWith(`${header}${JSON.stringify({...suiteInfo, id: [guid, 'jasmineStarted'].join(':')})}`);
     });
   });
 
   describe('#jasmineDone', () => {
     it('calls the on complete callback', () => {
-      const options = {done: 'fake options'};
+      const options = {done: true};
       subject.jasmineDone(options);
       expect(completeSpy).toHaveBeenCalledWith(options);
     });

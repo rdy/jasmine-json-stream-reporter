@@ -7,18 +7,30 @@ function handleFailures(failures, onError) {
 module.exports = function(reporter, options = {}) {
   const {onError = message => new Error(message)} = options;
   let failures = 0;
-  const result = {};
-  reporter.jasmineStarted(result);
+  let specInfo;
+
+  function specDone(chunk) {
+    if (chunk.status === 'failed') failures++;
+  }
+
+  function jasmineStarted(s) {
+    specInfo = s;
+  }
+
+  const events = {specStarted: true, specDone, suiteStarted: true, suiteDone: true, jasmineStarted, jasmineDone: true};
   return through(function(chunk, enc, next) {
-    if (chunk.id.endsWith(':spec')) {
-      if (chunk.status === 'failed') failures++;
-      reporter.specDone(chunk);
-    } else if (chunk.id.endsWith(':suite')) {
-      reporter.suiteDone(chunk);
+    for (let key in events) {
+      if (events.hasOwnProperty(key)) {
+        const value = events[key];
+        if (!chunk.id.endsWith(`:${key}`)) continue;
+        if (typeof value === 'function') value(chunk);
+        if (key in reporter) reporter[key](chunk);
+        break;
+      }
     }
     next(null, chunk);
   }, function(flush) {
-    reporter.jasmineDone(result);
+    reporter.jasmineDone();
     if (failures) this::handleFailures(failures, onError);
     flush();
   });
