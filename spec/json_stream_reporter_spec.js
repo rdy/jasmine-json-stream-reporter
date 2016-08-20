@@ -60,4 +60,12 @@ describe('JsonStreamReporter', () => {
       expect(completeSpy).toHaveBeenCalledWith(options);
     });
   });
+
+  describe('#message', () => {
+    it('prints the suite info', () => {
+      const message = 'some message';
+      subject.message(message);
+      expect(printSpy).toHaveBeenCalledWith(`${header}${JSON.stringify({id: [guid, 'message'].join(':'), message})}`);
+    });
+  });
 });

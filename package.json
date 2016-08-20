@@ -40,7 +40,7 @@
     "gulp-load-plugins": "^1.1.0",
     "gulp-plumber": "^1.0.1",
     "gulp-util": "^3.0.7",
-    "jasmine-async-suite": "0.0.4",
+    "jasmine-async-suite": "^0.0.4",
     "merge-stream": "^1.0.0",
     "npm": "^3.5.2",
     "require-dir": "^0.3.0",

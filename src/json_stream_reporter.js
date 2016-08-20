@@ -1,6 +1,6 @@
 const uuid = require('uuid');
 
-function generateId({id}, name) {
+function generateId(name, {id} = {}) {
   return [this.uuid, id, name].filter(Boolean).join(':');
 }
 
@@ -20,30 +20,35 @@ class JsonStreamReporter {
     this.format = options.format || function(obj) { return `${header}${JSON.stringify(obj)}`; };
   }
 
+  message(message) {
+    const obj = {id: this::generateId('message'), message};
+    this.print(this.format(obj));
+  }
+
   suiteStarted(suite) {
-    suite = {...suite, id: this::generateId(suite, 'suiteStarted')};
+    suite = {...suite, id: this::generateId('suiteStarted', suite)};
     this.print(this.format(suite));
   }
 
   suiteDone(suite) {
-    suite = {...suite, id: this::generateId(suite, 'suiteDone'), specs: this.specResults};
+    suite = {...suite, id: this::generateId('suiteDone', suite), specs: this.specResults};
     this.print(this.format(suite));
     this.specResults = [];
   }
 
   specStarted(spec) {
-    spec = {...spec, id: this::generateId(spec, 'specStarted')};
+    spec = {...spec, id: this::generateId('specStarted', spec)};
     this.print(this.format(spec));
   }
 
   specDone(spec) {
-    spec = {...spec, id: this::generateId(spec, 'specDone')};
+    spec = {...spec, id: this::generateId('specDone', spec)};
     this.print(this.format(spec));
     this.specResults.push(spec);
   }
 
   jasmineStarted(specInfo) {
-    specInfo = {...specInfo, id: this::generateId(specInfo, 'jasmineStarted')};
+    specInfo = {...specInfo, id: this::generateId('jasmineStarted')};
     this.print(this.format(specInfo));
   }
 

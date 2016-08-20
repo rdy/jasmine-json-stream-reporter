@@ -5,19 +5,19 @@ function handleFailures(failures, onError) {
 }
 
 module.exports = function(reporter, options = {}) {
-  const {onError = message => new Error(message)} = options;
+  const {onError = message => new Error(message), onMessage = message => process.stdout.write(message)} = options;
   let failures = 0;
-  let specInfo;
 
   function specDone(chunk) {
     if (chunk.status === 'failed') failures++;
   }
 
-  function jasmineStarted(s) {
-    specInfo = s;
+  function message({message}) {
+    if (reporter.print) return reporter.print(message);
+    onMessage(message);
   }
 
-  const events = {specStarted: true, specDone, suiteStarted: true, suiteDone: true, jasmineStarted, jasmineDone: true};
+  const events = {specStarted: true, specDone, suiteStarted: true, suiteDone: true, jasmineStarted: true, jasmineDone: true, message};
   return through(function(chunk, enc, next) {
     for (let key in events) {
       if (events.hasOwnProperty(key)) {

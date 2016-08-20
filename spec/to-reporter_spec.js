@@ -2,13 +2,13 @@ require('./spec_helper');
 
 describe('ToReporter', () => {
   const guid = 'some-guid';
-  let error, from, reporter, spec1Started, spec1, spec2Started, spec2, suite1Started, suite1, stream, subject, jasmineStarted;
+  let error, from, reporter, spec1Started, spec1, spec2Started, spec2, suite1Started, suite1, stream, subject, jasmineStarted, message;
   beforeEach(() => {
     const uuid = require('uuid');
     spyOn(uuid, 'v4').and.returnValue(guid);
     subject = require('../src/to-reporter');
     from = require('from2').obj;
-    reporter = jasmine.createSpyObj('reporter', ['specStarted', 'specDone', 'suiteStarted', 'suiteDone', 'jasmineStarted', 'jasmineDone']);
+    reporter = jasmine.createSpyObj('reporter', ['specStarted', 'specDone', 'suiteStarted', 'suiteDone', 'jasmineStarted', 'jasmineDone', 'print']);
     jasmineStarted = {id: ':jasmineStarted', spec: 'info'};
     spec1Started = {id: [guid, 1, 'specStarted'].join(':'), started: true};
     spec1 = {id: [guid, 1, 'specDone'].join(':'), status: 'passed'};
@@ -16,6 +16,7 @@ describe('ToReporter', () => {
     spec2 = {id: [guid, 2, 'specDone'].join(':'), status: 'passed'};
     suite1 = {id: [guid, 3, 'suiteDone'].join(':')};
     suite1Started = {id: [guid, 3, 'suiteStarted'].join(':'), started: true};
+    message = {id: [guid, 'message'].join(':'), message: 'some messae'};
   });
 
   afterEach(() => {
@@ -24,7 +25,7 @@ describe('ToReporter', () => {
 
   describe('when there are no failures', () => {
     beforeEach.async(async () => {
-      stream = from([jasmineStarted, spec1Started, spec1, spec2Started, spec2, suite1Started, suite1]);
+      stream = from([jasmineStarted, spec1Started, spec1, spec2Started, spec2, suite1Started, suite1, message]);
       stream.pause();
       const promise = waitFor(stream.pipe(subject(reporter)));
       stream.resume();
@@ -54,6 +55,10 @@ describe('ToReporter', () => {
 
     it('calls the reporter jasmine done', () => {
       expect(reporter.jasmineDone).toHaveBeenCalled();
+    });
+
+    it('calls the reporter print with the message', () => {
+      expect(reporter.print).toHaveBeenCalledWith(message.message);
     });
 
     it('does not emit an error', () => {
