@@ -61,11 +61,11 @@ describe('JsonStreamReporter', () => {
     });
   });
 
-  describe('#message', () => {
+  describe('#consoleMessage', () => {
     it('prints the suite info', () => {
       const message = 'some message';
-      subject.message(message);
-      expect(printSpy).toHaveBeenCalledWith(`${header}${JSON.stringify({id: [guid, 'message'].join(':'), message})}`);
+      subject.consoleMessage(message);
+      expect(printSpy).toHaveBeenCalledWith(`${header}${JSON.stringify({id: [guid, 'consoleMessage'].join(':'), message})}`);
     });
   });
 });

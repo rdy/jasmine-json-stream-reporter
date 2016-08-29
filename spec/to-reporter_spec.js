@@ -2,7 +2,7 @@ require('./spec_helper');
 
 describe('ToReporter', () => {
   const guid = 'some-guid';
-  let error, from, reporter, spec1Started, spec1, spec2Started, spec2, suite1Started, suite1, stream, subject, jasmineStarted, message;
+  let error, from, reporter, spec1Started, spec1, spec2Started, spec2, suite1Started, suite1, stream, subject, jasmineStarted, consoleMessage;
   beforeEach(() => {
     const uuid = require('uuid');
     spyOn(uuid, 'v4').and.returnValue(guid);
@@ -16,7 +16,7 @@ describe('ToReporter', () => {
     spec2 = {id: [guid, 2, 'specDone'].join(':'), status: 'passed'};
     suite1 = {id: [guid, 3, 'suiteDone'].join(':')};
     suite1Started = {id: [guid, 3, 'suiteStarted'].join(':'), started: true};
-    message = {id: [guid, 'message'].join(':'), message: 'some messae'};
+    consoleMessage = {id: [guid, 'consoleMessage'].join(':'), message: 'some messae'};
   });
 
   afterEach(() => {
@@ -25,7 +25,7 @@ describe('ToReporter', () => {
 
   describe('when there are no failures', () => {
     beforeEach.async(async () => {
-      stream = from([jasmineStarted, spec1Started, spec1, spec2Started, spec2, suite1Started, suite1, message]);
+      stream = from([jasmineStarted, spec1Started, spec1, spec2Started, spec2, suite1Started, suite1, consoleMessage]);
       stream.pause();
       const promise = waitFor(stream.pipe(subject(reporter)));
       stream.resume();
@@ -57,8 +57,8 @@ describe('ToReporter', () => {
       expect(reporter.jasmineDone).toHaveBeenCalled();
     });
 
-    it('calls the reporter print with the message', () => {
-      expect(reporter.print).toHaveBeenCalledWith(message.message);
+    it('calls the reporter print with the console message', () => {
+      expect(reporter.print).toHaveBeenCalledWith(consoleMessage.message);
     });
 
     it('does not emit an error', () => {

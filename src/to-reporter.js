@@ -6,19 +6,19 @@ function handleFailures(failures, onError) {
 
 module.exports = function(reporters, options = {}) {
   if (!Array.isArray(reporters)) reporters = [reporters];
-  const {onError = message => new Error(message), onMessage = () => {}} = options;
+  const {onError = message => new Error(message), onConsoleMessage = () => {}} = options;
   let failures = 0;
 
   function specDone(chunk) {
     if (chunk.status === 'failed') failures++;
   }
 
-  function message({message}) {
+  function consoleMessage({message}) {
     reporters.forEach(reporter => reporter.print && reporter.print(message));
-    onMessage(message);
+    onConsoleMessage(message);
   }
 
-  const events = {specStarted: true, specDone, suiteStarted: true, suiteDone: true, jasmineStarted: true, jasmineDone: true, message};
+  const events = {specStarted: true, specDone, suiteStarted: true, suiteDone: true, jasmineStarted: true, jasmineDone: true, consoleMessage};
   return through(function(chunk, enc, next) {
     Object.keys(events).find(key => {
       const value = events[key];

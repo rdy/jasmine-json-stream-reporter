@@ -20,8 +20,8 @@ class JsonStreamReporter {
     this.format = options.format || function(obj) { return `${header}${JSON.stringify(obj)}`; };
   }
 
-  message(message) {
-    const obj = {id: this::generateId('message'), message};
+  consoleMessage(message) {
+    const obj = {id: this::generateId('consoleMessage'), message};
     this.print(this.format(obj));
   }
 
