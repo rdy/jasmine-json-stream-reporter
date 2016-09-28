@@ -25,6 +25,11 @@ class JsonStreamReporter {
     this.print(this.format(obj));
   }
 
+  coverage(coverage) {
+    const obj = {id: this::generateId('coverage'), coverage};
+    this.print(this.format(obj));
+  }
+
   suiteStarted(suite) {
     suite = {...suite, id: this::generateId('suiteStarted', suite)};
     this.print(this.format(suite));

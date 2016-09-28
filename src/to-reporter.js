@@ -4,9 +4,12 @@ function handleFailures(failures, onError) {
   this.emit('error', onError(`${failures} ${failures === 1 ? 'failure' : 'failures'}`));
 }
 
+function noop() {
+}
+
 module.exports = function(reporters, options = {}) {
   if (!Array.isArray(reporters)) reporters = [reporters];
-  const {onError = message => new Error(message), onConsoleMessage = () => {}} = options;
+  const {onError = message => new Error(message), onConsoleMessage = noop, onCoverage = noop} = options;
   let failures = 0;
 
   function specDone(chunk) {
@@ -18,7 +21,11 @@ module.exports = function(reporters, options = {}) {
     onConsoleMessage(message);
   }
 
-  const events = {specStarted: true, specDone, suiteStarted: true, suiteDone: true, jasmineStarted: true, jasmineDone: true, consoleMessage};
+  function coverage({coverage}) {
+    onCoverage(coverage);
+  }
+
+  const events = {specStarted: true, specDone, suiteStarted: true, suiteDone: true, jasmineStarted: true, jasmineDone: true, consoleMessage, coverage};
   return through(function(chunk, enc, next) {
     Object.keys(events).find(key => {
       const value = events[key];
