@@ -13,6 +13,14 @@ describe('JsonStreamReporter', () => {
     subject = new JsonStreamReporter({header, print: printSpy, onComplete: completeSpy});
   });
 
+  describe('#coverage', () => {
+    it('prints the coverage', () => {
+      const coverage = {some: 'coverage'};
+      subject.coverage(coverage);
+      expect(printSpy).toHaveBeenCalledWith(`${header}${JSON.stringify({id: [guid, 'coverage'].join(':'), coverage})}`);
+    });
+  });
+
   describe('#suiteStarted', () => {
     it('prints the suite', () => {
       const suite = {id: 1};
