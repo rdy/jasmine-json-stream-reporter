@@ -9,7 +9,7 @@ function noop() {
 
 module.exports = function(reporters, options = {}) {
   if (!Array.isArray(reporters)) reporters = [reporters];
-  const {onError = message => new Error(message), onConsoleMessage = noop, onCoverage = noop} = options;
+  const {onError = message => new Error(message), onConsoleMessage = noop, onCoverage = noop, onSnapshots = noop} = options;
   let failures = 0;
 
   function specDone(chunk) {
@@ -25,7 +25,11 @@ module.exports = function(reporters, options = {}) {
     onCoverage(coverage);
   }
 
-  const events = {specStarted: true, specDone, suiteStarted: true, suiteDone: true, jasmineStarted: true, jasmineDone: true, consoleMessage, coverage};
+  function snapshots({snapshots}) {
+    onSnapshots(snapshots);
+  }
+
+  const events = {specStarted: true, specDone, suiteStarted: true, suiteDone: true, jasmineStarted: true, jasmineDone: true, consoleMessage, coverage, snapshots};
   return through(function(chunk, enc, next) {
     Object.keys(events).find(key => {
       const value = events[key];
