@@ -2,7 +2,7 @@ require('./spec_helper');
 
 describe('ToReporter', () => {
   const guid = 'some-guid';
-  let snapshots, error, from, reporter, spec1Started, spec1, spec2Started, spec2, suite1Started, suite1, stream, subject, jasmineStarted, consoleMessage, coverage, coverageMesssage, snapshotsMessage;
+  let snapshot, error, from, reporter, spec1Started, spec1, spec2Started, spec2, suite1Started, suite1, stream, subject, jasmineStarted, consoleMessage, coverage, coverageMesssage, snapshotMessage;
   beforeEach(() => {
     const uuid = require('uuid');
     spyOn(uuid, 'v4').and.returnValue(guid);
@@ -18,11 +18,8 @@ describe('ToReporter', () => {
     suite1Started = {id: [guid, 3, 'suiteStarted'].join(':'), started: true};
     consoleMessage = {id: [guid, 'consoleMessage'].join(':'), message: 'some messae'};
     coverage = {some: 'coverage'};
-    snapshots = [
-      {'html':'<a data-reactroot="" href="#historical" class="anchor">hello</a>','name':'Anchor', 'widths': [120]},
-      {'html':'<a data-reactroot="" href="#historical" class="anchor disabled">hello</a>','name':'Anchor disabled', 'widths': [120]}
-    ];
-    snapshotsMessage = {id: [guid, 'snapshots'].join(':'), snapshots};
+    snapshot = {'html':'<a data-reactroot="" href="#historical" class="anchor">hello</a>','name':'Anchor', 'widths': [120]};
+    snapshotMessage = {id: [guid, 'snapshot'].join(':'), snapshot};
     coverageMesssage = {id: [guid, 'coverage'].join(':'), coverage};
   });
 
@@ -31,13 +28,13 @@ describe('ToReporter', () => {
   });
 
   describe('when there are no failures', () => {
-    let onCoverageSpy, onSnapshotsSpy;
+    let onCoverageSpy, onSnapshotSpy;
     beforeEach.async(async () => {
       onCoverageSpy = jasmine.createSpy('onCoverage');
-      onSnapshotsSpy = jasmine.createSpy('onSnapshots');
-      stream = from([jasmineStarted, spec1Started, spec1, spec2Started, spec2, suite1Started, suite1, consoleMessage, coverageMesssage, snapshotsMessage]);
+      onSnapshotSpy = jasmine.createSpy('onSnapshot');
+      stream = from([jasmineStarted, spec1Started, spec1, spec2Started, spec2, suite1Started, suite1, consoleMessage, coverageMesssage, snapshotMessage]);
       stream.pause();
-      const promise = waitFor(stream.pipe(subject(reporter, {onCoverage: onCoverageSpy, onSnapshots: onSnapshotsSpy})));
+      const promise = waitFor(stream.pipe(subject(reporter, {onCoverage: onCoverageSpy, onSnapshot: onSnapshotSpy})));
       stream.resume();
       try {
         await promise;
@@ -75,8 +72,8 @@ describe('ToReporter', () => {
       expect(onCoverageSpy).toHaveBeenCalledWith(coverage);
     });
 
-    it('calls the onSnapshots callback', () => {
-      expect(onSnapshotsSpy).toHaveBeenCalledWith(snapshots);
+    it('calls the onSnapshot callback', () => {
+      expect(onSnapshotSpy).toHaveBeenCalledWith(snapshot);
     });
 
     it('does not emit an error', () => {

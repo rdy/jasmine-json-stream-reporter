@@ -21,14 +21,11 @@ describe('JsonStreamReporter', () => {
     });
   });
 
-  describe('#snapshots', () => {
-    it('prints the snapshots', () => {
-      const snapshots = [
-        {'html':'<a data-reactroot="" href="#historical" class="anchor">hello</a>','name':'Anchor', 'widths': [120]},
-        {'html':'<a data-reactroot="" href="#historical" class="anchor disabled">hello</a>','name':'Anchor disabled', 'widths': [120]}
-      ];
-      subject.snapshots(snapshots);
-      expect(printSpy).toHaveBeenCalledWith(`${header}${JSON.stringify({id: [guid, 'snapshots'].join(':'), snapshots})}`);
+  describe('#snapshot', () => {
+    it('prints the snapshot', () => {
+      const snapshot = {'html':'<a data-reactroot="" href="#historical" class="anchor">hello</a>','name':'Anchor', 'widths': [120]};
+      subject.snapshot(snapshot);
+      expect(printSpy).toHaveBeenCalledWith(`${header}${JSON.stringify({id: [guid, 'snapshot'].join(':'), snapshot})}`);
     });
   });
 
